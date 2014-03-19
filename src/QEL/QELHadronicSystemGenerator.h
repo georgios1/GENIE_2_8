@@ -34,8 +34,23 @@ public :
   // implement the EventRecordVisitorI interface
   void ProcessEventRecord (GHepRecord * event_rec) const;
 
+  // Simulate the formation zone
+  void SimulateCohLength(GHepRecord * evrec) const;
+
+  // overload the Algorithm::Configure() methods to load private data
+  // members from configuration options
+  void Configure(const Registry & config);
+  void Configure(string config);
+
 private:
   void AddRecoilBaryon    (GHepRecord * event_rec) const;
+
+  double fR0;             ///< param controling nuclear size
+  double fNR;             ///< how far beyond the nuclear boundary does the particle tracker goes?
+  bool fruncohlength;     ///< run the coh length simulation 
+  double fscaleparameter; ///< scale parameter 
+
+  void LoadConfig (void);
 };
 
 }      // genie namespace

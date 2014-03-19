@@ -30,6 +30,9 @@ namespace phys
   double FormationZone(
      double m, const TLorentzVector & p, const TVector3 & p3hadr, double ct0 /*in fm*/, double K);
 
+  // Coh Length in fm for QEL events
+  double QELCohLength(const TLorentzVector & p, TLorentzVector & q);
+
   // Longitudinal to transverse cross section ratio (R) parametrizations
   double R99118   (double x, double Q2); ///< PRL 98, 142301, 2007
   double RWhitlow (double x, double Q2);

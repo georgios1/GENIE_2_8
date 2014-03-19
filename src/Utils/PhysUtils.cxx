@@ -24,7 +24,10 @@
 
 #include "Utils/PhysUtils.h"
 #include "Messenger/Messenger.h"
+#include "Conventions/Constants.h"
+#include "Conventions/Units.h"
 
+using namespace genie::constants;
 //___________________________________________________________________________
 double  genie::utils::phys::FormationZone(
    double m, const TLorentzVector & p4, 
@@ -46,6 +49,21 @@ double  genie::utils::phys::FormationZone(
       << " GeV, ct0 = " << ct0 << " fm, K = " << K << ") = " << fz << " fm";
 
   return fz;
+}
+//___________________________________________________________________________
+double  genie::utils::phys::QELCohLength(const TLorentzVector & p4, TLorentzVector & q)
+{
+
+  double denom = TMath::Abs(p4.Dot(q));
+  double tcl = 0.;
+  if(denom > 0.)
+    tcl = p4.E()/denom;
+
+  // Take the right units
+  double c  = kLightSpeed / (units::fm/units::second);
+  double temp = tcl/units::second;
+
+  return temp*c;
 }
 //___________________________________________________________________________
 double genie::utils::phys::R99118(double x, double Q2)

@@ -16,6 +16,8 @@
 \cpright  Copyright (c) 2003-2013, GENIE Neutrino MC Generator Collaboration
           For the full text of the license visit http://copyright.genie-mc.org
           or see $GENIE/LICENSE
+
+At the moment it reweights the formation zone for DIS and the coherence length for QEL
 */
 //____________________________________________________________________________
 

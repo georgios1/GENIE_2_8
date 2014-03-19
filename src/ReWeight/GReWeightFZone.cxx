@@ -101,8 +101,9 @@ double GReWeightFZone::CalcWeight(const EventRecord & event)
 
   // Skip event if was not DIS scattering.
   bool is_dis = event.Summary()->ProcInfo().IsDeepInelastic();
-  if(!is_dis) {
-    LOG("ReW", pDEBUG) << "Not a DIS event";
+  bool is_qes = event.Summary()->ProcInfo().IsQuasiElastic();
+  if(!is_dis && !is_qes) {
+    LOG("ReW", pDEBUG) << "Not a DIS or QEL event";
     return 1.;
   }
 
@@ -164,8 +165,31 @@ double GReWeightFZone::CalcWeight(const EventRecord & event)
      
      // Default formation zone
      double m = p->Mass();
-     TLorentzVector * p4  = p->P4(); 
-     double fz_def = phys::FormationZone(m,*p4,p3hadr,fct0,fK);
+     TLorentzVector * p4  = p->P4();
+
+     double fz_def = 1.0;
+     if(is_dis){ 
+       fz_def = phys::FormationZone(m,*p4,p3hadr,fct0,fK);
+     }
+     else if(is_qes){
+      
+       const TLorentzVector & p4 = *(p->P4());
+
+       // Get the momentum transfer
+       GHepParticle * neutrino = event.Probe();
+       assert(neutrino);
+       GHepParticle * fsl = event.FinalStatePrimaryLepton();
+       assert(fsl);
+
+       const TLorentzVector & k1 = *(neutrino->P4());                     // v 4-p (k1)
+       const TLorentzVector & k2 = *(fsl->P4());                          // l 4-p (k2)
+
+       TLorentzVector q  = k1-k2;                     // q=k1-k2, 4-p transfer
+
+       fz_def = phys::QELFormationZone(p4, q);
+       
+     }
+
 
      double fz_scale_factor  = (1 + fFZoneTwkDial * fracerr);
      double fz_twk  = fz_def * fz_scale_factor;
@@ -191,7 +215,7 @@ double GReWeightFZone::CalcWeight(const EventRecord & event)
      // Update event weight
      event_weight *= hadron_weight;
   }
-
+  
   return event_weight;
 }
 //_______________________________________________________________________________________
